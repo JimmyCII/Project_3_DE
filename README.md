@@ -1,5 +1,5 @@
 # Project_3_DE
-Data ngineering of recreation.gov facility data
+Data Engineering of recreation.gov facility data
 
 ## Obtaining an RIDB API Key
 
