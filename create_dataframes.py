@@ -80,7 +80,7 @@ def process_facilities_data(facilities_data):
     #campsites_df = pd.merge(campsites_df, campsite_attributes_df, on="CampsiteID", how='left', suffixes = ('', '_attrib'))
 
      # Drop nested columns from campsites table
-    campsites_df = campsites_df.drop(columns = ['ENTITYMEDIA' 'PERMITTEDEQUIPMENT', 'ATTRIBUTES','CreatedDate'], errors ='ignore')
+    campsites_df = campsites_df.drop(columns = ['ENTITYMEDIA', 'PERMITTEDEQUIPMENT', 'ATTRIBUTES','CreatedDate'], errors ='ignore')
     facilities_df = facilities_df.drop(columns = ['FacilityAccessibilityText', 'Enabled', 'LINK', 'MEDIA', 'ORGANIZATION', 'PERMITENTRANCE', 'RECAREA', 'TOUR'], errors ='ignore')
     activities_df = activities_df.drop(columns = ['FacilityActivityFeeDescription'], errors ='ignore')
 
