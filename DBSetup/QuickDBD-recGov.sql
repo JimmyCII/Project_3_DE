@@ -27,6 +27,7 @@ CREATE TABLE "Facilities" (
     "ParentRecAreaID" TEXT   NULL,
     "Reservable" BOOLEAN   NULL,
     "StayLimit" TEXT   NULL,
+    
     CONSTRAINT "pk_Facilities" PRIMARY KEY (
         "FacilityID"
      )
@@ -43,7 +44,7 @@ CREATE TABLE "Campsites" (
     "FacilityID" TEXT   NULL,
     "LastUpdatedDate" TEXT   NULL,
     "Loop" TEXT   NULL,
-    "TypeOfUse" TEXT   NULL
+    "TypeOfUse" TEXT   NULL,
     CONSTRAINT "pk_Campsites" PRIMARY KEY (
         "CampsiteID"
      )
@@ -68,6 +69,21 @@ CREATE TABLE "PermittedEquipment" (
     "CampsiteID" TEXT   NOT NULL
 );
 
+
+CREATE TABLE "FacilityAddresses" (
+    "AddressCountryCode" TEXT    NULL,
+    "AddressStateCode" TEXT   NULL,
+    "City" TEXT   NULL,
+    "FacilityAddressID" TEXT   NULL,
+    "FacilityID" TEXT   NULL,
+    "FacilityStreetAddress1" TEXT    NULL,
+    "FacilityStreetAddress2" TEXT    NULL,
+    "FacilityStreetAddress3" TEXT    NULL,
+    "LastUpdatedDate" Text  NULL,
+    "PostalCode" TEXT   NULL
+);
+
+
 ALTER TABLE "Campsites" ADD CONSTRAINT "fk_Campsites_FacilityID" FOREIGN KEY("FacilityID")
 REFERENCES "Facilities" ("FacilityID");
 
@@ -79,4 +95,7 @@ REFERENCES "Campsites" ("CampsiteID");
 
 ALTER TABLE "PermittedEquipment" ADD CONSTRAINT "fk_PermittedEquipment_PermittedEquipment" FOREIGN KEY("CampsiteID")
 REFERENCES "Campsites" ("CampsiteID");
+
+ALTER TABLE "FacilityAddresses" ADD CONSTRAINT "fk_FacilityAddresses_FacilityID" FOREIGN KEY("FacilityID")
+REFERENCES "Facilities" ("FacilityID");
 

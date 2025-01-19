@@ -81,13 +81,13 @@ def process_facilities_data(facilities_data):
     # Merge Permitted Equipment Back to the Campsite Table (using a left join)
     #campsites_df = pd.merge(campsites_df, permitted_equipment_df, on="CampsiteID", how='left', suffixes=('', '_permit'))
     #campsites_df = pd.merge(campsites_df, campsite_attributes_df, on="CampsiteID", how='left', suffixes = ('', '_attrib'))
-    facilities_df = pd.merge(facilities_df, facility_address_df, on="FacilityID", how='left', suffixes = ('', '_address'))
+    # facilities_df = pd.merge(facilities_df, facility_address_df, on="FacilityID", how='left', suffixes = ('', '_address'))
      # Drop nested columns from campsites table
     campsites_df = campsites_df.drop(columns = ['ENTITYMEDIA', 'PERMITTEDEQUIPMENT', 'ATTRIBUTES','CreatedDate'], errors ='ignore')
     facilities_df = facilities_df.drop(columns = ['FacilityAccessibilityText', 'Enabled', 'LINK', 'MEDIA', 'ORGANIZATION', 'PERMITENTRANCE', 'RECAREA', 'TOUR', 'FacilityAddressType', 'LastUpdatedDate_address'], errors ='ignore')
     activities_df = activities_df.drop(columns = ['FacilityActivityFeeDescription'], errors ='ignore')
-
-    return facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df
+    facility_address_df = facility_address_df.drop(columns = ['FacilityAddressType'], errors ='ignore')
+    return facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df, facility_address_df
 
 
 def output_to_csv(df, filename):
@@ -124,7 +124,7 @@ if __name__ == "__main__":
         
 
     if facilities_data:
-        facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df  = process_facilities_data(facilities_data)
+        facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df, facility_address_df  = process_facilities_data(facilities_data)
 
         if not facilities_df.empty:
             print("Facilities DataFrame:")
@@ -168,5 +168,11 @@ if __name__ == "__main__":
             output_to_csv(campsite_attributes_df, "campsite_attributes.csv")
         else:
            print("\nFailed to create the campsite attributes Dataframe")
-
+        if not facility_address_df.empty:
+            print("\nFacility Addresses DataFrame:")
+            facility_address_df.info()
+            print(facility_address_df.head())
+            output_to_csv(facility_address_df, "facility_address.csv")
+        else:
+             print("\nFailed to create the facility address Dataframe")
 
