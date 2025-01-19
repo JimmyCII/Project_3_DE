@@ -31,10 +31,10 @@ def process_facilities_data(facilities_data):
         return pd.DataFrame(), pd.DataFrame(), pd.DataFrame(), pd.DataFrame()
     
     facilities_df = create_dataframe(facilities_data)
-    
+    facility_address_data = []
     activities_data = []
     campsites_data = []
-    events_data = []
+    # events_data = []
     
     permitted_equipment_data = []  # Initialize permitted equipment data
     campsite_attribute_db = []
@@ -60,31 +60,34 @@ def process_facilities_data(facilities_data):
                             attribute['CampsiteID'] = camp_id
                             campsite_attribute_db.append(attribute) #add the campsite attributes to the list
                         campsites_data.append(camp)
-            if 'EVENT' in facility and facility["EVENT"]: #Check if there is data
-              for event in facility["EVENT"]:
-                event['FacilityID'] = facility_id
-                events_data.append(event)
-    
+            # if 'EVENT' in facility and facility["EVENT"]: #Check if there is data
+            #   for event in facility["EVENT"]:
+            #     event['FacilityID'] = facility_id
+            #     events_data.append(event)
+            if facility.get('FACILITYADDRESS'):  #check that list is not empty
+              for address in facility.get('FACILITYADDRESS'):
+                address['FacilityID'] = facility_id
+                facility_address_data.append(address)
     
     facilities_df = facilities_df.drop(columns = ["ACTIVITY", "CAMPSITE", "EVENT"], errors = 'ignore') #Drop the columns that have blank data
 
     activities_df = create_dataframe(activities_data)
     campsites_df = create_dataframe(campsites_data)
-    events_df = create_dataframe(events_data)
+    # events_df = create_dataframe(events_data)
     permitted_equipment_df = create_dataframe(permitted_equipment_data) # Creates a DF for the permitted equipment
     campsite_attributes_df = create_dataframe(campsite_attribute_db) # Creates a DF for the campsite attributes
-    
+    facility_address_df = create_dataframe(facility_address_data)
 
     # Merge Permitted Equipment Back to the Campsite Table (using a left join)
     #campsites_df = pd.merge(campsites_df, permitted_equipment_df, on="CampsiteID", how='left', suffixes=('', '_permit'))
     #campsites_df = pd.merge(campsites_df, campsite_attributes_df, on="CampsiteID", how='left', suffixes = ('', '_attrib'))
-
+    facilities_df = pd.merge(facilities_df, facility_address_df, on="FacilityID", how='left', suffixes = ('', '_address'))
      # Drop nested columns from campsites table
     campsites_df = campsites_df.drop(columns = ['ENTITYMEDIA', 'PERMITTEDEQUIPMENT', 'ATTRIBUTES','CreatedDate'], errors ='ignore')
-    facilities_df = facilities_df.drop(columns = ['FacilityAccessibilityText', 'Enabled', 'LINK', 'MEDIA', 'ORGANIZATION', 'PERMITENTRANCE', 'RECAREA', 'TOUR'], errors ='ignore')
+    facilities_df = facilities_df.drop(columns = ['FacilityAccessibilityText', 'Enabled', 'LINK', 'MEDIA', 'ORGANIZATION', 'PERMITENTRANCE', 'RECAREA', 'TOUR', 'FacilityAddressType', 'LastUpdatedDate_address'], errors ='ignore')
     activities_df = activities_df.drop(columns = ['FacilityActivityFeeDescription'], errors ='ignore')
 
-    return facilities_df, activities_df, campsites_df, events_df, permitted_equipment_df, campsite_attributes_df
+    return facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df
 
 
 def output_to_csv(df, filename):
@@ -121,7 +124,7 @@ if __name__ == "__main__":
         
 
     if facilities_data:
-        facilities_df, activities_df, campsites_df, events_df, permitted_equipment_df, campsite_attributes_df  = process_facilities_data(facilities_data)
+        facilities_df, activities_df, campsites_df, permitted_equipment_df, campsite_attributes_df  = process_facilities_data(facilities_data)
 
         if not facilities_df.empty:
             print("Facilities DataFrame:")
@@ -144,13 +147,13 @@ if __name__ == "__main__":
             output_to_csv(campsites_df, "campsites.csv")
         else:
            print("\nFailed to create the campsites Dataframe")
-        if not events_df.empty:
-           print("\nEvents DataFrame:")
-           events_df.info()
-           print(events_df.head())
-           output_to_csv(events_df, "events.csv")
-        else:
-           print("\nEvents Dataframe empty, CSV not created")
+        # if not events_df.empty:
+        #    print("\nEvents DataFrame:")
+        #    events_df.info()
+        #    print(events_df.head())
+        #    output_to_csv(events_df, "events.csv")
+        # else:
+        #    print("\nEvents Dataframe empty, CSV not created")
         if not permitted_equipment_df.empty:
             print("\nPermitted Equipment DataFrame:")
             permitted_equipment_df.info()

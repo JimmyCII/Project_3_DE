@@ -7,7 +7,7 @@ import datetime
 
 base_url = 'https://ridb.recreation.gov/api/v1/'
 
-def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), states = None):
+def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), states = None, full=True):
     """Fetches data from the Recreation.gov API for various endpoints, handling pagination and rate limits.
 
     Args:
@@ -16,6 +16,7 @@ def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), st
         params: A dictionary of query parameters.
         max_records: The maximum number of records to fetch in total.
         states: A list of states to pull data from.
+        full: boolean, if it should pull the full record or not.
     Returns:
         A list of dictionaries representing the data from the API.
     """
@@ -36,7 +37,8 @@ def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), st
             'limit': limit,
             'offset': offset,
              'state': state,
-             'activity': 'Camping'
+             'activity': 'Camping',
+              'full': full
             }
           if params:
               current_params.update(params)
@@ -72,8 +74,6 @@ def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), st
             break
 
     return all_data
-
-
 def fetch_ridb_related_data(api_key, endpoint, facility_id, params=None):
     """Fetches related data from the Recreation.gov API for a specific facility.
 
@@ -92,7 +92,6 @@ def fetch_ridb_related_data(api_key, endpoint, facility_id, params=None):
     }
     
     full_url = f"{base_url}facilities/{facility_id}/{endpoint}"
-    
     request_counter = 0 # Added counter to track requests
     start_time = time.time() # start time
     rate_limit = 50 # set the limit
@@ -136,30 +135,30 @@ if __name__ == "__main__":
     
     if facilities_data:
        # Save the raw JSON data to file
-       print("Starting to fetch related data...", end="", flush=True)  # Initial progress message with flush
-       start_time = datetime.datetime.now() # add time for start of related data calls
-       for facility in facilities_data:
+      print("Starting to fetch related data...", end="", flush=True) # output message
+      start_time = datetime.datetime.now() # start time
+      for facility in facilities_data:
           facility_id = facility.get("FacilityID")
           if facility_id:
-            activities = fetch_ridb_related_data(RecGov_API_Key, "activities", facility_id)
-            facility['ACTIVITY'] = activities
+            # activities = fetch_ridb_related_data(RecGov_API_Key, "activities", facility_id)
+            # facility['ACTIVITY'] = activities
 
             campsites = fetch_ridb_related_data(RecGov_API_Key, "campsites", facility_id)
             facility['CAMPSITE'] = campsites
 
-            events = fetch_ridb_related_data(RecGov_API_Key, "events", facility_id)
-            facility['EVENT'] = events
-            current_time = datetime.datetime.now().strftime("%H:%M:%S")
-            print(f"... {current_time}", end="", flush=True) # print out data after each related call
-    output_file = os.path.join(data_dir, "facilities_data.json")
-    try:
-        with open(output_file, 'w') as outfile:
-          json.dump(facilities_data, outfile, indent=4)
+            # events = fetch_ridb_related_data(RecGov_API_Key, "events", facility_id)
+            # facility['EVENT'] = events
+            current_time = datetime.datetime.now().strftime("%H:%M:%S") # time stamp
+            print(f"... {current_time}", end="", flush=True)
 
-        print(f"\nRaw JSON data saved to: {output_file}")
-        end_time = datetime.datetime.now()
-        elapsed_time = end_time - start_time
-        print(f"Time taken for fetching related data: {elapsed_time}") # Print out total elapsed time
+      output_file = os.path.join(data_dir, "facilities_data.json")
+      try:
+          with open(output_file, 'w') as outfile:
+            json.dump(facilities_data, outfile, indent=4)
 
-    except Exception as e:
-        print(f"Error while saving json file: {e}")
+          print(f"\nRaw JSON data saved to: {output_file}")
+          end_time = datetime.datetime.now() #calculate end time
+          elapsed_time = end_time - start_time #calculate the time
+          print(f"Time taken for fetching related data: {elapsed_time}") # Print the overall time.
+      except Exception as e:
+          print(f"Error while saving json file: {e}")
