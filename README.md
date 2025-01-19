@@ -1,6 +1,9 @@
 # Project_3_DE
 Data Engineering of recreation.gov facility data
 
+New python libraries
+Streamlit to generate dashboard: https://pypi.org/project/streamlit/
+FastAPI to create API connections:  https://pypi.org/project/fastapi/
 ## Obtaining an RIDB API Key
 
 To use the Recreation.gov API (RIDB API), you'll need an API key. This key authenticates your requests and allows you to access the data. Follow these steps to obtain one:
