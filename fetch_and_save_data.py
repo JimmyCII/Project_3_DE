@@ -1,7 +1,7 @@
 import requests
 import json
 import os
-from config import RecGov_API_Key
+from config import RecGov_API_Key  #Config file with API key for Recreation.gov located in the same directory and redacted from GitHub using .gitignore
 import time
 import datetime
 
@@ -74,6 +74,7 @@ def fetch_ridb_data(api_key, endpoint, params=None, max_records=float('inf'), st
             break
 
     return all_data
+
 def fetch_ridb_related_data(api_key, endpoint, facility_id, params=None):
     """Fetches related data from the Recreation.gov API for a specific facility.
 

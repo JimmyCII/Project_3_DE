@@ -74,6 +74,7 @@ CREATE TABLE "FacilityAddresses" (
     "AddressCountryCode" TEXT    NULL,
     "AddressStateCode" TEXT   NULL,
     "City" TEXT   NULL,
+    -
     "FacilityAddressID" TEXT   NULL,
     "FacilityID" TEXT   NULL,
     "FacilityStreetAddress1" TEXT    NULL,
