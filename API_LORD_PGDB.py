@@ -127,12 +127,12 @@ async def read_campsites(state:str = None):
                 a."AttributeName",
                 a."AttributeValue",
                 p."MaxLength",
-                 fa."AddressStateCode"
+                fa."AddressStateCode"
         FROM "Campsites" AS c
           LEFT JOIN "CampSiteAttribute" AS a ON c."CampsiteID" = a."CampsiteID"
           LEFT JOIN "PermittedEquipment" AS p ON c."CampsiteID" = p."CampsiteID"
           LEFT JOIN "Facilities" AS f on c."FacilityID" = f."FacilityID"
-         LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
+          LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
     """
     conditions = []
 
