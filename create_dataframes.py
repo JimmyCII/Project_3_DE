@@ -70,7 +70,8 @@ def process_facilities_data(facilities_data):
                 facility_address_data.append(address)
     
     facilities_df = facilities_df.drop(columns = ["ACTIVITY", "CAMPSITE", "EVENT"], errors = 'ignore') #Drop the columns that have blank data
-
+    if not facilities_df.empty:
+        facilities_df['GEOJSON'] = facilities_df['GEOJSON'].astype(str).str.replace("'", '"') #Convert the GEOJSON column to string
     activities_df = create_dataframe(activities_data)
     campsites_df = create_dataframe(campsites_data)
     # events_df = create_dataframe(events_data)

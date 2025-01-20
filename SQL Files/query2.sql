@@ -113,4 +113,33 @@ SELECT 'CampSiteAttribute' AS table_name, COUNT(*) AS row_count FROM "CampSiteAt
 UNION ALL
 SELECT 'Activities' AS table_name, COUNT(*) AS row_count FROM "Activities"
 UNION ALL
-SELECT 'PermittedEquipment' AS table_name, COUNT(*) AS row_count FROM "PermittedEquipment";
+SELECT 'PermittedEquipment' AS table_name, COUNT(*) AS row_count FROM "PermittedEquipment"
+UNION ALL
+SELECT 'FacilityAddresses' AS table_name, COUNT(*) AS row_count FROM "FacilityAddresses";
+
+SELECT
+	f."FacilityName",
+	f."FacilityTypeDescription",
+	f."FacilityPhone",
+	f."GEOJSON",
+	f."Reservable",
+	a."FacilityStreetAddress1",
+	a."FacilityStreetAddress2",
+	a."City",
+	a."AddressStateCode",
+	a."PostalCode",
+	c."CampsiteAccessible",
+	c."CampsiteName",
+	c."CampsiteReservable",
+	c."CampsiteType",
+	c."Loop",
+	c."TypeOfUse"
+FROM
+	"Facilities" AS f	
+JOIN 
+	"FacilityAddresses" AS a ON f."FacilityID" =a."FacilityID"
+JOIN	
+	"Campsites" AS c on f."FacilityID" =c."FacilityID"
+WHERE
+	a."AddressStateCode" ='AZ' and c."CampsiteAccessible" = 'true'
+	

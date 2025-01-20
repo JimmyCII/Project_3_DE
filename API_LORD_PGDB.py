@@ -4,17 +4,20 @@ from fastapi import FastAPI, HTTPException
 import psycopg2
 from typing import List, Dict
 import json
-import os
+# import os
 # from dotenv import load_dotenv
 from fastapi.responses import HTMLResponse
+from fastapi.openapi.docs import get_redoc_html
+# import re
+from config import DBpassword
 
-app = FastAPI()
+app = FastAPI(description="API Endpoints for recreational facilities")
 
 # Database connection configuration
 DB_HOST = "localhost"  
 DB_NAME = "LORD"       
 DB_USER = "postgres"      
-DB_PASSWORD = "admin"   # Replace with your actual database password
+DB_PASSWORD = DBpassword  # Replace with your actual database password
 
 # Function to try connection to the database and returne conn if successful and error if not
 
@@ -32,7 +35,7 @@ def create_full_description(summary, path, base_url = "http://127.0.0.1:8000"):
 async def root():
     api_endpoints = []
     for route in app.routes:
-        if route.path not in ("/openapi.json", "/docs", "/favicon.ico", "/docs/oauth2-redirect", "/redoc"):
+        if route.path not in ("/openapi.json", "/docs", "/favicon.ico", "/docs/oauth2-redirect", "/"):
            methods = ", ".join(route.methods)
            description = getattr(route, "summary", route.path)
            full_description = create_full_description(description, route.path)
@@ -61,7 +64,12 @@ async def root():
         """
     return HTMLResponse(content=html_content)
 
-@app.get("/facilities", response_model=List[Dict], summary="Read Facilities (optional filters)")
+@app.get("/redoc", include_in_schema=False, summary="link to API documentation")
+async def redoc():
+    return get_redoc_html(
+        openapi_url="/openapi.json", title="API documentation"
+    )
+@app.get("/facilities", response_model=List[Dict], summary="Read Facilities (optional filters by state and ADA accessibility)")
 async def read_facilities(state: str = None, ada_accessible: bool = None):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -98,20 +106,25 @@ async def read_facilities(state: str = None, ada_accessible: bool = None):
 
     facilities = []
     for row in rows:
-        facility = {
-            "FacilityID":row[0],
-            "FacilityName":row[1],
-            "FacilityLatitude":row[2],
-            "FacilityLongitude":row[3],
-            "GEOJSON": row[4],
-            "FacilityAdaAccess": row[5],
-            "AddressStateCode":row[6],
-            "Reservable": row[7],
-        }
-        facilities.append(facility)
+      try:
+        geojson = json.loads(row[4]) if row[4] else None
+        if geojson:
+            facility = {
+                "FacilityID":row[0],
+                "FacilityName":row[1],
+                "FacilityLatitude":row[2],
+                "FacilityLongitude":row[3],
+                "GEOJSON": geojson,
+                "FacilityAdaAccess": row[5],
+                "AddressStateCode":row[6],
+                "Reservable": row[7],
+            }
+            facilities.append(facility)
+      except json.JSONDecodeError as e:
+            pass    
     return facilities
 
-@app.get("/campsites", response_model=List[Dict], summary="Read Campsites (optional filters)")
+@app.get("/campsites", response_model=List[Dict], summary="Read Campsites (optional filters by state)")
 async def read_campsites(state:str = None):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -126,11 +139,9 @@ async def read_campsites(state:str = None):
                 c."TypeOfUse",
                 a."AttributeName",
                 a."AttributeValue",
-                p."MaxLength",
                 fa."AddressStateCode"
         FROM "Campsites" AS c
           LEFT JOIN "CampSiteAttribute" AS a ON c."CampsiteID" = a."CampsiteID"
-          LEFT JOIN "PermittedEquipment" AS p ON c."CampsiteID" = p."CampsiteID"
           LEFT JOIN "Facilities" AS f on c."FacilityID" = f."FacilityID"
           LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
     """
@@ -157,13 +168,12 @@ async def read_campsites(state:str = None):
             "TypeOfUse": row[6],
             "AttributeName": row[7],
             "AttributeValue": row[8],
-            "MaxLength": row[9],
-            "AddressStateCode": row[10]
+            "AddressStateCode": row[9]
         }
         campsites.append(campsite)
     return campsites
 
-@app.get("/activities", response_model=List[Dict], summary="Read Activities (optional filters)")
+@app.get("/activities", response_model=List[Dict], summary="Read Activities (optional filters by state)")
 async def read_activities(state: str = None):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -173,9 +183,9 @@ async def read_activities(state: str = None):
           a."ActivityName",
           a."FacilityActivityDescription",
           f."FacilityID",
-            fa."AddressStateCode"
+          fa."AddressStateCode"
         FROM "Activities" AS a
-            LEFT JOIN "Facilities" AS f ON a."FacilityID" = f."FacilityID"
+          LEFT JOIN "Facilities" AS f ON a."FacilityID" = f."FacilityID"
           LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
     """
     conditions = []

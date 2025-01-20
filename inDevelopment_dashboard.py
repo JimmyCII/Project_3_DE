@@ -25,7 +25,6 @@ def get_facilities(state=None, ada_accessible=None):
 
 def get_campsites(state = None):
     params = {}
-
     if state:
         params["state"] = state
     response = requests.get(f"{API_URL}/campsites", params=params)
@@ -110,7 +109,6 @@ all_campsite_attributes = get_all_campsite_attributes()
 all_permitted_equipment = get_all_permitted_equipment()
 all_facility_addresses = get_all_facility_addresses()
 
-
 # Facility Map
 st.header("Facilities Map")
 
@@ -135,11 +133,12 @@ if facilities:
 else:
   st.write("No facilities found based on the filters")
 
+
 if campsites:
   st.header("Campsites")
   for site in campsites:
-    if site["AttributeName"] and site["AttributeValue"] and site["MaxLength"]:
-        st.write(f"Campsite: {site['CampsiteName']}, State: {site['AddressStateCode']},  Type: {site['TypeOfUse']}, Max Group size: {site['AttributeValue']}, Max Length {site['MaxLength']}, reservable: {site['CampsiteReservable']} for facility: {site['FacilityID']}")
+    if site["AttributeName"] and site["AttributeValue"]:
+        st.write(f"Campsite: {site['CampsiteName']}, State: {site['AddressStateCode']},  Type: {site['TypeOfUse']}, Max Group size: {site['AttributeValue']}, reservable: {site['CampsiteReservable']} for facility: {site['FacilityID']}")
     else:
        st.write(f"Campsite: {site['CampsiteName']}, State: {site['AddressStateCode']}, Type: {site['TypeOfUse']}, reservable: {site['CampsiteReservable']} for facility: {site['FacilityID']}")
 else:
