@@ -143,3 +143,64 @@ JOIN
 WHERE
 	a."AddressStateCode" ='AZ' and c."CampsiteAccessible" = 'true'
 	
+
+SELECT
+                c."CampsiteID",
+                c."CampsiteName",
+                c."CampsiteLatitude",
+                c."CampsiteLongitude",
+                c."CampsiteReservable",
+                c."FacilityID",
+                c."TypeOfUse",
+                a."AttributeName",
+                a."AttributeValue",
+               
+				fa."AddressStateCode"
+        FROM "Campsites" AS c
+          LEFT JOIN "CampSiteAttribute" AS a ON c."CampsiteID" = a."CampsiteID"
+          
+          LEFT JOIN "Facilities" AS f on c."FacilityID" = f."FacilityID"
+          LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
+
+UPDATE "Facilities"
+SET "GEOJSON" = replace("GEOJSON", '''', '"');
+
+SELECT
+            f."FacilityID",
+            f."FacilityName",
+            f."FacilityLatitude",
+            f."FacilityLongitude",
+            f."GEOJSON",
+            f."FacilityAdaAccess",
+            a."AddressStateCode",
+            f."Reservable"
+        FROM "Facilities" AS f
+         LEFT JOIN "FacilityAddresses" AS a ON f."FacilityID" = a."FacilityID";
+
+
+SELECT
+            f."FacilityID",
+            f."FacilityName",
+            f."FacilityLatitude",
+            f."FacilityLongitude",
+            f."GEOJSON",
+            f."FacilityAdaAccess",
+            a."AddressStateCode",
+            f."Reservable"
+        FROM "Facilities" AS f
+         LEFT JOIN "FacilityAddresses" AS a ON f."FacilityID" = a."FacilityID"
+        WHERE f."GEOJSON" IS NULL OR json_typeof(f."GEOJSON"::JSON)='object'
+
+
+SELECT
+            f."FacilityID",
+            f."FacilityName",
+            f."FacilityLatitude",
+            f."FacilityLongitude",
+            f."GEOJSON",
+            f."FacilityAdaAccess",
+            a."AddressStateCode",
+            f."Reservable"
+        FROM "Facilities" AS f
+        LEFT JOIN "FacilityAddresses" AS a ON f."FacilityID" = a."FacilityID"
+        WHERE f."FacilityLongitude" !=0;

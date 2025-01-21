@@ -8,7 +8,7 @@ import json
 # from dotenv import load_dotenv
 from fastapi.responses import HTMLResponse
 from fastapi.openapi.docs import get_redoc_html
-# import re
+import re
 from config import DBpassword
 
 app = FastAPI(description="API Endpoints for recreational facilities")
@@ -69,6 +69,7 @@ async def redoc():
     return get_redoc_html(
         openapi_url="/openapi.json", title="API documentation"
     )
+
 @app.get("/facilities", response_model=List[Dict], summary="Read Facilities (optional filters by state and ADA accessibility)")
 async def read_facilities(state: str = None, ada_accessible: bool = None):
     conn = get_db_connection()
@@ -84,8 +85,10 @@ async def read_facilities(state: str = None, ada_accessible: bool = None):
             a."AddressStateCode",
             f."Reservable"
         FROM "Facilities" AS f
-         LEFT JOIN "FacilityAddresses" AS a ON f."FacilityID" = a."FacilityID"
+        LEFT JOIN "FacilityAddresses" AS a ON f."FacilityID" = a."FacilityID"
+        WHERE f."FacilityLongitude" !=0 
     """
+
     conditions = []
     if state:
       conditions.append(f""" a."AddressStateCode" = '{state}'""")
@@ -98,31 +101,39 @@ async def read_facilities(state: str = None, ada_accessible: bool = None):
 
 
     if conditions:
-      query += " WHERE " + " AND ".join(conditions)
-
+      query += " AND " + " AND ".join(conditions)
+    print(f"SQL Query: {query}") 
     cur.execute(query)
     rows = cur.fetchall()
     conn.close()
 
     facilities = []
     for row in rows:
-      try:
-        geojson = json.loads(row[4]) if row[4] else None
-        if geojson:
-            facility = {
-                "FacilityID":row[0],
-                "FacilityName":row[1],
-                "FacilityLatitude":row[2],
-                "FacilityLongitude":row[3],
-                "GEOJSON": geojson,
-                "FacilityAdaAccess": row[5],
-                "AddressStateCode":row[6],
-                "Reservable": row[7],
-            }
-            facilities.append(facility)
-      except json.JSONDecodeError as e:
-            pass    
-    return facilities
+       if row[2] != 0.0 or row[3] != 0.0 :
+        try:
+          geojson = row[4] if row[4] else None
+          if geojson and isinstance(geojson, str):
+             geojson = re.sub(r"null", r"None", geojson, flags=re.IGNORECASE)
+             geojson = json.dumps(json.loads(geojson)) if geojson else None
+            #  geojson = json.loads(geojson)
+          else:
+            geojson = None
+        except json.JSONDecodeError:
+           geojson = None
+
+        facility = {
+            "FacilityID":row[0],
+            "FacilityName":row[1],
+            "FacilityLatitude":row[2],
+            "FacilityLongitude":row[3],
+            "GEOJSON": geojson,
+            "FacilityAdaAccess": row[5],
+            "AddressStateCode":row[6],
+            "Reservable": row[7],
+        }
+        facilities.append(facility)
+      
+    return facilities      
 
 @app.get("/campsites", response_model=List[Dict], summary="Read Campsites (optional filters by state)")
 async def read_campsites(state:str = None):
