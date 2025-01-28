@@ -3,7 +3,7 @@ Our project was to create a database showing local access to accurate campsite d
 
 ## Authors
 - Jim Cockerham, 2025
-[@jimmyc2](https://github.com/jimmyc2)
+[@jimmycII](https://github.com/jimmycII)
 - Alexis Gutierrez, 2025
 [@ag0902](https://github.com/ag0902)
 - Andrew Lane, 2025 
