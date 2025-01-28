@@ -1,5 +1,5 @@
-# Project_3_DE
-Our project was to create a database showing local access to accurate campsite data, enhancing outdoor recreation opportunities in Arizona, Oregon, and Utah. Using the data provided to us on Recreation.gov/, this information can efficiently search for campsite reservation details across those states, ADA accessibility and amenities all in one spot.
+# Project_3_Data_Engineering
+Our project was to create a database showing local access to accurate campsite data, enhancing outdoor recreation opportunities in Arizona, Oregon, and Utah. Using the data provided to us on Recreation.gov/, this information can efficiently search for campsite reservation details across those states, ADA accessibility and amenities all in one spot. Local Outdoor Recreation Database, or L.O.R.D.
 
 ## Authors
 - Jim Cockerham, 2025
@@ -16,6 +16,10 @@ Our project was to create a database showing local access to accurate campsite d
 ![alt text](IMG/ERD.png)
 ![alt text](IMG/Welcome_to_the_API.png)
 ![alt text](IMG/Localized_Rec_Facilities_Map.png)
+
+## Presentation
+- [Prezie presentation](https://prezi.com/view/OeNZqec9LOY4W3Nkblfr/)
+- [PDF of presentation](Notes/ETL_to_create_the_L.O.R.D.pdf)
 
 ## Files
 - API_LORD_PGDB.py
