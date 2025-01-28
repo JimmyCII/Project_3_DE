@@ -1,8 +1,6 @@
  Custom ignore
 .DS_Store
-NSSATS_PUF_2019_CSV.csv
-tedsa_puf_2019.csv
-api_keys.py
+config.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

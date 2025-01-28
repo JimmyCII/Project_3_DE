@@ -57,8 +57,8 @@ Our project was to create a database showing local access to accurate campsite d
   - querry2.sql
 
 ### New python libraries
-- Streamlit to generate dashboard: https://pypi.org/project/streamlit/
-- FastAPI to create API connections:  https://pypi.org/project/fastapi/
+- [Streamlit to generate dashboard](https://pypi.org/project/streamlit/)
+- [FastAPI to create API connections](https://pypi.org/project/fastapi/)
 
 ## Ethics
 Our project was to create a database showing local access to accurate campsite data, enhancing outdoor recreation opportunities in Arizona, Oregon, and Utah. Using the data provided to us on Recreation.gov/, this information can efficiently search for campsite reservation details across those states, ADA accessibility and amenities all in one spot. Local Outdoor Recreation Database, or L.O.R.D.
