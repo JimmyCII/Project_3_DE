@@ -1,11 +1,63 @@
 # Project_3_DE
 Data Engineering of recreation.gov facility data
 
+## Authors
+- Jim Cockerham, 2025
+[@jimmyc2](https://github.com/jimmyc2)
+- Alexis Gutierrez, 2025
+[@ag0902](https://github.com/ag0902)
+- Andrew Lane, 2025 
+[@andrewplane](https://github.com/andrewplane)
+- Chris Prada, 2025
+[@MCPrada777](https://github.com/MCPrada777)
+
+## Highlights
+![alt text](IMG/rec_gov.png)
+![alt text](IMG/ERD.png)
+![alt text](IMG/Welcome_to_the_API.png)
+![alt text](IMG/Localized_Rec_Facilities_Map.png)
+
+## Files
+- API_LORD_PGDB.py
+- config.py
+- create_dataframes.py
+- fetch_and_save_data.py
+- Localized_Recreation_Map.py
+- csv_output
+  - activities.csv
+  - campsite_attributes.csv
+  - campsites.csv
+  - fascilities.csv
+  - fascility_address.csv
+  - permitted_equipment.csv
+- DBSetup
+  - QuickDBD-recGov.sql
+  - DBValidation
+    - data-1737323925135.csv
+    - PostgresSQL outputcsv.csv
+- IMG
+  - ERD.png
+  - Localized_Rec_Fascilities_Map.png
+  - reservation.fields.png
+  - Welcome_to_the_API.png
+- Initial Notebook
+  - recGovDFbuild.ipynb
+- json_output
+  - fascilities_data.json
+- Notes
+  - Data Engineering Journey.docx
+  DBD and Validation of Data loaded.docx
+- SQL Files
+  - querry.sql
+  - querry2.sql
+
+
 New python libraries
 Streamlit to generate dashboard: https://pypi.org/project/streamlit/
 FastAPI to create API connections:  https://pypi.org/project/fastapi/
 
-## Obtaining an RIDB API Key
+## Development
+### Obtaining an RIDB API Key
 
 To use the Recreation.gov API (RIDB API), you'll need an API key. This key authenticates your requests and allows you to access the data. Follow these steps to obtain one:
 
