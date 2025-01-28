@@ -50,7 +50,8 @@ Our project was to create a database showing local access to accurate campsite d
   - fascilities_data.json
 - Notes
   - Data Engineering Journey.docx
-  DBD and Validation of Data loaded.docx
+  - DBD and Validation of Data loaded.docx
+  - ETL_to_create_the_L.O.R.D.pdf
 - SQL Files
   - querry.sql
   - querry2.sql
