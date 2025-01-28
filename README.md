@@ -1,5 +1,5 @@
 # Project_3_DE
-Data Engineering of recreation.gov facility data
+Our project was to create a database showing local access to accurate campsite data, enhancing outdoor recreation opportunities in Arizona, Oregon, and Utah. Using the data provided to us on Recreation.gov/, this information can efficiently search for campsite reservation details across those states, ADA accessibility and amenities all in one spot.
 
 ## Authors
 - Jim Cockerham, 2025
