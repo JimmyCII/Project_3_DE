@@ -60,6 +60,18 @@ Our project was to create a database showing local access to accurate campsite d
 - Streamlit to generate dashboard: https://pypi.org/project/streamlit/
 - FastAPI to create API connections:  https://pypi.org/project/fastapi/
 
+## Ethics
+Our project was to create a database showing local access to accurate campsite data, enhancing outdoor recreation opportunities in Arizona, Oregon, and Utah. Using the data provided to us on Recreation.gov/, this information can efficiently search for campsite reservation details across those states, ADA accessibility and amenities all in one spot. Local Outdoor Recreation Database, or L.O.R.D.
+
+We considered ethical questions with how we were using the data. In simple terms: Could our data be misused? The short answer is no! The database uses a customer's zip code that gets sorted in a regional code that then generates an order number. This obscures the customers identification and makes it decentralized so that the risk of misuse is minimized. 
+
+Additionally, was it ethical of us to pull this data off of Recreation.gov? Yes! Our intent was to provide information that benefits anyone that would like to search this data and use it for additional research into where would be the best camping/recreation spot for them. Per the terms of usage and intended audience on the [https://ridb.recreation.gov/landing](https://ridb.recreation.gov/landing) They specify that it’s intended for the general public and encourages usage so everyone can have the most up-to-date information across the database.
+
+Lastly, we speculated on how this data may be misused in a more hypothetical way. With enough malicious intent and a lot of back end knowledge. A person could use the data to cancel a person’s reservation, track them to a recently visited, or current campsite, or confirm how long they’ll be at that specific location. This could potentially be combined with a little social engineering to at best ruin someone’s camping trip, and at worst open them up to more nefarious schemes.
+
+In conclusion, we were able to create a functional database that contains useful information to anyone who is looking into getting more information for their outdoor activities. 
+
+
 ## Development
 ### Obtaining an RIDB API Key
 
