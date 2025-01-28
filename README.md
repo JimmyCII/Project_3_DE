@@ -56,10 +56,9 @@ Our project was to create a database showing local access to accurate campsite d
   - querry.sql
   - querry2.sql
 
-
-New python libraries
-Streamlit to generate dashboard: https://pypi.org/project/streamlit/
-FastAPI to create API connections:  https://pypi.org/project/fastapi/
+### New python libraries
+- Streamlit to generate dashboard: https://pypi.org/project/streamlit/
+- FastAPI to create API connections:  https://pypi.org/project/fastapi/
 
 ## Development
 ### Obtaining an RIDB API Key
