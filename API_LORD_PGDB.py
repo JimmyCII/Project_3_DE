@@ -212,8 +212,9 @@ async def read_nom_nom_campsites(state: str = None):
         'ACCESSIBLE GRILLS', 'Campfire Allowed', 'FIREWOOD'
     ]
     
-    # Build the query to find campsites with cooking amenities
-    query = """
+    # Build the query to find campsites with cooking amenities using parameterized queries
+    placeholders = ','.join(['%s'] * len(cooking_attributes))
+    query = f"""
         SELECT DISTINCT
             c."CampsiteID",
             c."CampsiteName",
@@ -230,17 +231,16 @@ async def read_nom_nom_campsites(state: str = None):
         INNER JOIN "CampSiteAttribute" AS a ON c."CampsiteID" = a."CampsiteID"
         LEFT JOIN "Facilities" AS f ON c."FacilityID" = f."FacilityID"
         LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
-        WHERE a."AttributeName" IN ({})
-    """.format(','.join([f"'{attr}'" for attr in cooking_attributes]))
+        WHERE a."AttributeName" IN ({placeholders})
+    """
     
-    conditions = []
+    params = list(cooking_attributes)
+    
     if state:
-        conditions.append(f""" fa."AddressStateCode" = '{state}'""")
+        query += """ AND fa."AddressStateCode" = %s"""
+        params.append(state)
     
-    if conditions:
-        query += " AND " + " AND ".join(conditions)
-    
-    cur.execute(query)
+    cur.execute(query, params)
     rows = cur.fetchall()
     conn.close()
     
