@@ -184,6 +184,93 @@ async def read_campsites(state:str = None):
         campsites.append(campsite)
     return campsites
 
+@app.get("/campsites/nom-nom", response_model=List[Dict], summary="Find campsites with cooking amenities (grills, fire pits, kitchens, etc.)")
+async def read_nom_nom_campsites(state: str = None):
+    """
+    Find campsites with food preparation and cooking amenities.
+    
+    This endpoint filters campsites that have cooking-related attributes like:
+    - Grills and BBQs
+    - Fire pits and campfire rings
+    - Cooking areas and kitchens
+    - Cooking utensils and pots
+    - Food storage lockers
+    
+    Parameters:
+    - state: Optional state code filter (e.g., 'AZ', 'OR', 'UT')
+    
+    Returns list of campsites with their cooking amenities.
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    # Define cooking-related attributes
+    cooking_attributes = [
+        'GRILLS', 'BBQ', 'COOKING AREA', 'COOKING UTENSILS', 'COOKING POTS',
+        'FIRE PIT', 'Fire Pit', 'FIREPLACE', 'CAMPFIRE RINGS', 'CAMPFIRE CIRCLES',
+        'Grills/Fire Ring', 'KITCHEN', 'FOOD STORAGE LOCKER', 'Food Locker',
+        'ACCESSIBLE GRILLS', 'Campfire Allowed', 'FIREWOOD'
+    ]
+    
+    # Build the query to find campsites with cooking amenities using parameterized queries
+    placeholders = ','.join(['%s'] * len(cooking_attributes))
+    query = f"""
+        SELECT DISTINCT
+            c."CampsiteID",
+            c."CampsiteName",
+            c."CampsiteLatitude",
+            c."CampsiteLongitude",
+            c."CampsiteReservable",
+            c."FacilityID",
+            c."TypeOfUse",
+            a."AttributeName",
+            a."AttributeValue",
+            fa."AddressStateCode",
+            f."FacilityName"
+        FROM "Campsites" AS c
+        INNER JOIN "CampSiteAttribute" AS a ON c."CampsiteID" = a."CampsiteID"
+        LEFT JOIN "Facilities" AS f ON c."FacilityID" = f."FacilityID"
+        LEFT JOIN "FacilityAddresses" AS fa ON f."FacilityID" = fa."FacilityID"
+        WHERE a."AttributeName" IN ({placeholders})
+    """
+    
+    params = list(cooking_attributes)
+    
+    if state:
+        query += """ AND fa."AddressStateCode" = %s"""
+        params.append(state)
+    
+    cur.execute(query, params)
+    rows = cur.fetchall()
+    conn.close()
+    
+    # Group campsites by CampsiteID to aggregate attributes
+    campsites_dict = {}
+    for row in rows:
+        campsite_id = row[0]
+        if campsite_id not in campsites_dict:
+            campsites_dict[campsite_id] = {
+                "CampsiteID": row[0],
+                "CampsiteName": row[1],
+                "CampsiteLatitude": row[2],
+                "CampsiteLongitude": row[3],
+                "CampsiteReservable": row[4],
+                "FacilityID": row[5],
+                "TypeOfUse": row[6],
+                "CookingAmenities": [],
+                "AddressStateCode": row[9],
+                "FacilityName": row[10]
+            }
+        
+        # Add the cooking amenity to the list
+        if row[7] and row[8]:  # AttributeName and AttributeValue
+            campsites_dict[campsite_id]["CookingAmenities"].append({
+                "AttributeName": row[7],
+                "AttributeValue": row[8]
+            })
+    
+    return list(campsites_dict.values())
+
 @app.get("/activities", response_model=List[Dict], summary="Read Activities (optional filters by state)")
 async def read_activities(state: str = None):
     conn = get_db_connection()
